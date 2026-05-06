@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f97316">
+<title>✨ היום שלי</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(160deg,#fff8f0 0%,#fdf4ff 50%,#f0fdf4 100%);min-height:100vh;direction:rtl}
+.header{background:linear-gradient(135deg,#f97316,#ec4899,#8b5cf6);padding:32px 20px 40px;color:white;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.08)}
+.header::after{content:'';position:absolute;top:10px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.1)}
+.header h1{font-size:24px;font-weight:900;text-align:center;position:relative}
+.hdate{text-align:center;opacity:.85;font-size:14px;margin-top:4px;position:relative}
+.prog-card{background:rgba(255,255,255,0.2);border-radius:24px;padding:16px 20px;margin-top:16px;position:relative}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.prog-pct{font-size:20px;font-weight:900}
+.prog-count{font-size:13px;opacity:.9}
+.prog-track{background:rgba(255,255,255,0.3);border-radius:99px;height:14px}
+.prog-fill{height:14px;border-radius:99px;background:linear-gradient(90deg,#fde68a,#fff);transition:width .6s;box-shadow:0 0 12px rgba(255,255,255,0.4)}
+.prog-done{text-align:center;margin-top:8px;font-weight:800;font-size:14px}
+.notif-bar{background:#fffbeb;border-bottom:2px solid #fde68a;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.notif-bar span{color:#92400e;font-size:14px}
+.notif-bar button{background:linear-gradient(135deg,#f59e0b,#f97316);color:white;border:none;border-radius:20px;padding:7px 18px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
+.tabs{background:white;display:flex;gap:6px;padding:12px 12px 0;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.06)}
+.tb{flex:1;padding:10px 4px 12px;border-radius:16px 16px 0 0;border:none;cursor:pointer;font-weight:700;font-size:14px;transition:all .2s;background:transparent;color:#9ca3af;font-family:inherit}
+.tb.at{background:linear-gradient(135deg,#f97316,#fb923c);color:white}
+.tb.ak{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white}
+.tb.aa{background:linear-gradient(135deg,#10b981,#34d399);color:white}
+.content{padding:20px 16px 80px;max-width:480px;margin:0 auto}
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sec-lbl{font-weight:900;font-size:17px;color:#374151}
+.sec-bdg{color:white;border-radius:20px;padding:3px 12px;font-size:13px;font-weight:700}
+.card{border-radius:24px;overflow:hidden;border:2px solid;margin-bottom:12px;transition:all .3s;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.card.done{border-color:#86efac;background:linear-gradient(135deg,#f0fdf4,#dcfce7);box-shadow:0 4px 20px rgba(134,239,172,0.3)}
+.card.rescheduled{border-color:#fed7aa;background:linear-gradient(135deg,#fff7ed,#ffedd5)}
+.card.morning{border-color:#fed7aa;background:#fff7ed}
+.card.evening{border-color:#ddd6fe;background:#f5f3ff}
+.card.celebrate{transform:scale(1.02);box-shadow:0 8px 30px rgba(249,115,22,0.3)}
+.card-main{display:flex;align-items:center;gap:14px;padding:16px 16px 12px}
+.chk{width:46px;height:46px;min-width:46px;border-radius:50%;border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.chk.on{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 4px 12px rgba(34,197,94,0.4);color:white;font-size:20px}
+.chk.off{background:white;box-shadow:0 2px 8px rgba(0,0,0,0.12)}
+.cinfo{flex:1;min-width:0}
+.cname{font-weight:700;font-size:15px;color:#1f2937;line-height:1.3}
+.cname.done{text-decoration:line-through;color:#9ca3af}
+.ctime{font-size:12px;color:#9ca3af;margin-top:3px}
+.cresched{font-size:12px;color:#f97316;margin-top:3px;font-weight:600}
+.cheer{text-align:center;padding:2px 16px 10px;font-weight:800;font-size:15px;color:#16a34a}
+.note-area{border-top:1.5px dashed rgba(0,0,0,0.08);margin:0 16px}
+.note-bar{padding:10px 0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.note-txt{font-size:13px;color:#c4b5fd;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note-txt.has{color:#6d28d9;font-style:italic}
+.note-add{background:white;color:#7c3aed;border:2px solid #c4b5fd;border-radius:20px;padding:6px 14px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.note-add.has{background:#ede9fe}
+.note-edit{padding:10px 0 14px}
+.note-edit-lbl{font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:8px}
+.note-ta{width:100%;border:2px solid #c4b5fd;border-radius:16px;padding:10px 14px;font-size:13px;resize:none;outline:none;background:#faf5ff;font-family:inherit;direction:rtl}
+.note-save{margin-top:8px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:white;border:none;border-radius:20px;padding:8px 20px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
+.tasks-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.tasks-hdr span{font-weight:900;font-size:18px;color:#374151}
+.add-btn{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:white;border:none;border-radius:20px;padding:10px 20px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(139,92,246,0.4);font-family:inherit}
+.tli{background:white;border-radius:20px;padding:14px 16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);border:2px solid #f3f4f6;display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.tli-icon{font-size:26px;flex-shrink:0}
+.tli-info{flex:1;min-width:0}
+.tli-name{font-weight:700;font-size:14px;color:#1f2937}
+.tli-meta{font-size:12px;color:#9ca3af;margin-top:2px}
+.tli-acts{display:flex;gap:6px}
+.ebtn{background:#eff6ff;border:none;border-radius:12px;width:36px;height:36px;font-size:16px;cursor:pointer}
+.dbtn{background:#fef2f2;border:none;border-radius:12px;width:36px;height:36px;font-size:16px;cursor:pointer}
+.form-card{background:linear-gradient(135deg,#faf5ff,#ede9fe);border:2px solid #c4b5fd;border-radius:24px;padding:20px;margin-bottom:16px}
+.form-card h3{font-weight:900;font-size:17px;color:#6d28d9;margin-bottom:16px}
+.fg{margin-bottom:12px}
+.fg label{font-size:12px;color:#7c3aed;font-weight:600;display:block;margin-bottom:4px}
+.fi,.fs{width:100%;border:2px solid #ddd6fe;border-radius:16px;padding:10px 14px;font-size:14px;outline:none;background:white;direction:rtl;font-family:inherit}
+.row{display:flex;gap:12px}
+.fq{display:flex;gap:8px}
+.fqb{flex:1;padding:10px;border-radius:16px;border:2px solid #ddd6fe;cursor:pointer;font-weight:700;font-size:13px;background:white;color:#6d28d9;font-family:inherit;transition:all .2s}
+.fqb.on{background:linear-gradient(135deg,#8b5cf6,#6d28d9);border-color:#6d28d9;color:white}
+.drow{display:flex;gap:6px}
+.dbt{width:38px;height:38px;border-radius:50%;border:2px solid #ddd6fe;cursor:pointer;font-weight:800;font-size:14px;background:white;color:#9ca3af;font-family:inherit;transition:all .2s}
+.dbt.on{background:linear-gradient(135deg,#f97316,#ec4899);border-color:#ec4899;color:white}
+.factions{display:flex;gap:10px;margin-top:16px}
+.svbtn{flex:1;padding:13px;border-radius:20px;border:none;cursor:pointer;font-weight:800;font-size:15px;color:white;background:linear-gradient(135deg,#8b5cf6,#6d28d9);box-shadow:0 4px 14px rgba(139,92,246,0.4);font-family:inherit}
+.cxbtn{flex:1;padding:13px;border-radius:20px;border:2px solid #e5e7eb;background:white;cursor:pointer;font-weight:700;font-size:15px;color:#6b7280;font-family:inherit}
+.ac{background:white;border-radius:24px;padding:20px 16px;box-shadow:0 2px 16px rgba(0,0,0,0.06);margin-bottom:16px}
+.ac h3{font-weight:900;font-size:16px;color:#374151;margin-bottom:16px}
+.sbr{margin-bottom:16px}
+.sbr-top{display:flex;justify-content:space-between;margin-bottom:6px;align-items:center}
+.sbr-name{font-size:14px;font-weight:600;color:#374151}
+.sbr-pct{font-size:15px;font-weight:800}
+.sbr-track{background:#f3f4f6;border-radius:99px;height:10px}
+.sbr-fill{height:10px;border-radius:99px;transition:width .5s}
+.sbr-sub{font-size:11px;color:#9ca3af;margin-top:3px}
+.empty{text-align:center;padding:60px 0;color:#d1d5db}
+.empty .ei{font-size:64px;margin-bottom:12px}
+.empty .et{font-size:18px;font-weight:700}
+.empty .es{font-size:14px;margin-top:4px}
+.done-banner{margin-top:24px;border-radius:24px;padding:24px;text-align:center;background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
+.done-banner .di{font-size:48px;margin-bottom:8px}
+.done-banner .dt{font-weight:900;color:#065f46;font-size:20px}
+.done-banner .ds{color:#047857;font-size:14px;margin-top:4px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const DS=['א','ב','ג','ד','ה','ו','ש'];
+const CHEERS=['כל הכבוד! 🎉','מעולה! המשך כך! 💪','ביצועים מצוינים! ⭐','אתה על הדרך הנכונה! 🚀','פנטסטי! 🔥','עבודה נהדרת! 👏','אלוף! 🏆','וואו — עשית את זה! 🌟'];
+const SK={t:'pm-t-v5',c:'pm-c-v1',r:'pm-r-v2',d:'pm-d-v1'};
+const ICONS={'תפילין':'🙏','אימון':'💪','משקולות':'💪','תנ':'📖','ספר':'📚','גיטרה':'🎸','AI':'🤖','מוסיקה':'🎵','איטלקית':'🇮🇹','ספרדית':'🇪🇸','שפה':'🌍','תמונות':'📸','לופה':'🌿','עסקים':'💼','ילדים':'✍️','מטלות':'📝'};
+
+const DT=[
+  {id:'t01',name:'תפילין',time:'05:00',frequency:'daily',days:[],rem:10},
+  {id:'t02',name:'אימון משקולות + בטן + שכיבות שמיכה',time:'05:45',frequency:'daily',days:[],rem:15},
+  {id:'t03',name:'קריאת תנ"ך',time:'06:45',frequency:'daily',days:[],rem:10},
+  {id:'t05',name:'קריאת ספר',time:'07:15',frequency:'daily',days:[],rem:10},
+  {id:'t06',name:'נגינה בגיטרה — בוקר',time:'07:50',frequency:'daily',days:[],rem:10},
+  {id:'t04',name:'קורס AI — בוקר',time:'08:30',frequency:'daily',days:[],rem:10},
+  {id:'t08',name:'שפה — לימוד איטלקית',time:'14:00',frequency:'daily',days:[],rem:10},
+  {id:'t09',name:'שפה — לימוד ספרדית',time:'15:00',frequency:'daily',days:[],rem:10},
+  {id:'t10',name:'גיטרה — עדכון שיר נוסף',time:'16:00',frequency:'daily',days:[],rem:10},
+  {id:'t11',name:'קורס AI — אחה"צ',time:'17:00',frequency:'daily',days:[],rem:10},
+  {id:'t12',name:'משימות פיתוח עסקים',time:'17:50',frequency:'daily',days:[],rem:15},
+  {id:'t07',name:'מוסיקה — קורס',time:'18:45',frequency:'daily',days:[],rem:10},
+  {id:'t17',name:'לופה — הכנה אלבומי תמונות',time:'19:30',frequency:'daily',days:[],rem:10},
+  {id:'t14',name:'גיטרה — נגינה ערב',time:'20:15',frequency:'daily',days:[],rem:10},
+  {id:'t13',name:'אלבומי תמונות — עריכה + וידאו',time:'21:00',frequency:'daily',days:[],rem:10},
+  {id:'t15',name:'כתיבת ספר ילדים',time:'21:45',frequency:'daily',days:[],rem:10},
+  {id:'t16',name:'הכנת מטלות ליום המחרת',time:'23:00',frequency:'daily',days:[],rem:15},
+];
+
+let S={tasks:[],comps:{},resched:{},dnotes:{},tab:'today',editNoteId:null,form:null,cheer:null,cheerTimer:null};
+
+const tm=t=>{const[h,m]=t.split(':').map(Number);return h*60+m;};
+const tt=m=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+const td=()=>new Date().toISOString().split('T')[0];
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const icon=n=>{for(const[k,v]of Object.entries(ICONS))if(n.includes(k))return v;return'✨';};
+const onDay=(t,d)=>t.frequency==='daily'||t.days?.includes(d.getDay());
+const ld=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}};
+const sv=( k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}};
+const svAll=()=>{sv(SK.t,S.tasks);sv(SK.c,S.comps);sv(SK.r,S.resched);sv(SK.d,S.dnotes);};
+const getDN=id=>(S.dnotes[td()]||{})[id]||'';
+const doneToday=()=>S.comps[td()]||[];
+
+function getTT(){
+  const now=new Date(),rsd=S.resched[td()]||{};
+  return S.tasks.filter(t=>onDay(t,now))
+    .map(t=>({...t,et:rsd[t.id]||t.time,rs:!!rsd[t.id]}))
+    .sort((a,b)=>a.et.localeCompare(b.et));
+}
+
+function checkResched(){
+  const now=new Date(),d=td(),done=S.comps[d]||[],ex=S.resched[d]||{};
+  const nm=now.getHours()*60+now.getMinutes();
+  let ch=false;const up={...ex};
+  S.tasks.filter(t=>onDay(t,now)).forEach(t=>{
+    if(done.includes(t.id)||up[t.id])return;
+    if(nm>tm(t.time)+60){let m=Math.min(nm+90,22*60+30);m=Math.round(m/30)*30;up[t.id]=tt(m);ch=true;}
+  });
+  if(ch){S.resched={...S.resched,[d]:up};sv(SK.r,S.resched);}
+}
+
+// SVG charts
+function svgBar(data,color='#f97316'){
+  const W=320,H=150,pL=10,pR=10,pT=20,pB=25;
+  const bw=Math.floor((W-pL-pR)/data.length)-6;
+  return`<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`+
+    data.map((d,i)=>{const bh=Math.max(2,Math.round((d.v/100)*(H-pT-pB)));const x=pL+i*Math.floor((W-pL-pR)/data.length)+3;const y=H-pB-bh;
+      return`<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="6" fill="${color}" opacity="${d.v?1:0.15}"/>
+      <text x="${x+bw/2}" y="${H-6}" text-anchor="middle" font-size="11" fill="#9ca3af" font-family="system-ui">${d.n}</text>
+      ${d.v?`<text x="${x+bw/2}" y="${y-5}" text-anchor="middle" font-size="10" fill="${color}" font-family="system-ui">${d.v}%`+'</text>':''}`;}
+    ).join('')+'</svg>';
+}
+function svgLine(data,color='#8b5cf6'){
+  const W=320,H=150,pL=15,pR=15,pT=20,pB=25;const n=data.length;
+  const xf=i=>pL+i*(W-pL-pR)/(n-1),yf=v=>H-pB-Math.round((v/100)*(H-pT-pB));
+  const pts=data.map((d,i)=>({x:xf(i),y:yf(d.v),v:d.v,n:d.n}));
+  const path=pts.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');
+  return`<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <path d="${path}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+    ${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="5" fill="${color}"/>${p.v?`<text x="${p.x}" y="${p.y-9}" text-anchor="middle" font-size="10" fill="${color}" font-family="system-ui">${p.v}%`+'</text>':''}`).join('')}
+    ${pts.map(p=>`<text x="${p.x}" y="${H-5}" text-anchor="middle" font-size="11" fill="#9ca3af" font-family="system-ui">${p.n}`+'</text>').join('')}
+  </svg>`;
+}
+function wkData(){return Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));const ds=d.toISOString().split('T')[0];const dt=S.tasks.filter(t=>onDay(t,d));const dn=(S.comps[ds]||[]).filter(id=>dt.find(t=>t.id===id)).length;return{n:DS[d.getDay()],v:dt.length?Math.round(dn/dt.length*100):0};});}
+function moData(){return Array.from({length:4},(_,w)=>{let dn=0,tot=0;for(let d=0;d<7;d++){const dt2=new Date();dt2.setDate(dt2.getDate()-((3-w)*7+d));const ds=dt2.toISOString().split('T')[0];const dt=S.tasks.filter(t=>onDay(t,dt2));tot+=dt.length;dn+=(S.comps[ds]||[]).filter(id=>dt.find(t=>t.id===id)).length;}return{n:`ש${w+1}`,v:tot?Math.round(dn/tot*100):0};});}
+function tStats(task){let dn=0,tot=0;for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);if(onDay(task,d)){tot++;const ds=d.toISOString().split('T')[0];if((S.comps[ds]||[]).includes(task.id))dn++;}}return{dn,tot,pct:tot?Math.round(dn/tot*100):0};}
+
+// Render
+function rHeader(){
+  const now=new Date(),t2=getTT(),dn=doneToday(),pct=t2.length?Math.round(dn.length/t2.length*100):0;
+  const ds=now.toLocaleDateString('he-IL',{weekday:'long',month:'long',day:'numeric'});
+  return`<div class="header"><h1>✨ היום שלי</h1><p class="hdate">${ds}</p>
+    <div class="prog-card"><div class="prog-top"><span class="prog-pct">${pct}% הושלם 🎯</span><span class="prog-count">${dn.length}/${t2.length} משימות</span></div>
+    <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+    ${pct===100?'<div class="prog-done">🏆 יום מושלם!</div>':''}</div></div>`;
+}
+function rNotif(){
+  if(Notification.permission==='granted')return'';
+  return`<div class="notif-bar"><span>🔔 אפשר התראות ותזכורות</span><button data-action="ask-notif">אפשר ✨</button></div>`;
+}
+function rTabs(){
+  return`<div class="tabs">
+    <button class="tb ${S.tab==='today'?'at':''}" data-action="set-tab" data-tab="today">📋 היום</button>
+    <button class="tb ${S.tab==='tasks'?'ak':''}" data-action="set-tab" data-tab="tasks">⚙️ משימות</button>
+    <button class="tb ${S.tab==='analytics'?'aa':''}" data-action="set-tab" data-tab="analytics">📊 ניתוח</button>
+  </div>`;
+}
+
+function rCard(task){
+  const done=doneToday().includes(task.id),cel=S.cheer?.id===task.id,dn=getDN(task.id),ed=S.editNoteId===task.id;
+  let cls='card';
+  if(done)cls+=' done';else if(task.rs)cls+=' rescheduled';else if(task.et<'12:00')cls+=' morning';else cls+=' evening';
+  if(cel)cls+=' celebrate';
+  const timeRow=task.rs
+    ?`<div class="cresched">🔁 הועבר ל־${task.et} <s style="color:#d1d5db">${task.time}</s></div>`
+    :`<div class="ctime">🕐 ${task.time}</div>`;
+  const noteRow=ed
+    ?`<div class="note-edit"><div class="note-edit-lbl">📅 הערה להיום בלבד</div>
+       <textarea class="note-ta" id="nta-${task.id}" rows="2" placeholder="כתוב הערה להיום...">${esc(dn)}</textarea>
+       <button class="note-save" data-action="save-note" data-id="${task.id}">✓ שמור</button></div>`
+    :`<div class="note-bar"><span class="note-txt ${dn?'has':''}">${dn?'📅 '+esc(dn):'📅 הערה יומית...'}</span>
+       <button class="note-add ${dn?'has':''}" data-action="start-note" data-id="${task.id}">${dn?'✏️ ערוך':'+ הוסף'}</button></div>`;
+  return`<div class="${cls}">
+    <div class="card-main">
+      <button class="chk ${done?'on':'off'}" data-action="toggle" data-id="${task.id}">${done?'✓':icon(task.name)}</button>
+      <div class="cinfo"><div class="cname ${done?'done':''}">${esc(task.name)}</div>${timeRow}</div>
+    </div>
+    ${cel?`<div class="cheer">${esc(S.cheer.msg)}</div>`:''}
+    <div class="note-area">${noteRow}</div>
+  </div>`;
+}
+
+function rToday(){
+  const t2=getTT(),dn=doneToday();
+  if(!t2.length)return`<div class="empty"><div class="ei">🌈</div><div class="et">אין משימות להיום</div><div class="es">הוסף משימות בלשונית ⚙️</div></div>`;
+  const secs=[{l:'🌅 בוקר מאירות',c:'#f97316',f:t=>t.et<'12:00'},{l:'🌙 אחה"צ וערב',c:'#7c3aed',f:t=>t.et>='12:00'}];
+  let h='';
+  secs.forEach(({l,c,f})=>{const g=t2.filter(f);if(!g.length)return;const gd=g.filter(t=>dn.includes(t.id)).length;
+    h+=`<div style="margin-bottom:28px"><div class="sec-hdr"><span class="sec-lbl">${l}</span><span class="sec-bdg" style="background:${c}">${gd}/${g.length}</span></div>${g.map(rCard).join('')}</div>`;});
+  if(dn.length===t2.length&&t2.length)h+=`<div class="done-banner"><div class="di">🏆</div><div class="dt">כל המשימות הושלמו!</div><div class="ds">יום מושלם — ממשיך לקדם!</div></div>`;
+  return h;
+}
+
+function rForm(){
+  const f=S.form;
+  const dbtns=DS.map((d,i)=>`<button class="dbt ${f.days?.includes(i)?'on':''}" data-action="toggle-day" data-day="${i}">${d}</button>`).join('');
+  return`<div class="form-card"><h3>${f.id?'✏️ עריכת משימה':'✨ משימה חדשה'}</h3>
+    <div class="fg"><label>שם המשימה</label><input class="fi" id="fn" value="${esc(f.name||'')}" placeholder="לדוגמה: ספורט בוקר 🏃" oninput="S.form.name=this.value"></div>
+    <div class="row">
+      <div class="fg" style="flex:1"><label>שעת ביצוע</label><input class="fi" type="time" value="${f.time||'08:00'}" onchange="S.form.time=this.value"></div>
+      <div class="fg" style="flex:1"><label>תזכורת</label><select class="fs" onchange="S.form.rem=Number(this.value)">
+        ${[5,10,15,30,60].map(m=>`<option value="${m}" ${f.rem===m?'selected':''}>${m} דק'</option>`).join('')}</select></div>
+    </div>
+    <div class="fg"><label>תדירות</label><div class="fq">
+      <button class="fqb ${f.frequency==='daily'?'on':''}" data-action="set-freq" data-freq="daily">📅 יומי</button>
+      <button class="fqb ${f.frequency==='specific'?'on':''}" data-action="set-freq" data-freq="specific">📆 ימים מסוימים</button>
+    </div></div>
+    ${f.frequency==='specific'?`<div class="fg"><label>בחר ימים</label><div class="drow">${dbtns}</div></div>`:''}
+    <div class="factions">
+      <button class="svbtn" data-action="save-task">💾 שמור</button>
+      <button class="cxbtn" data-action="cancel-form">ביטול</button>
+    </div>
+  </div>`;
+}
+
+function rTasks(){
+  return`<div class="tasks-hdr"><span>📋 כל המשימות</span><button class="add-btn" data-action="new-task">+ הוסף משימה</button></div>
+  ${S.form?rForm():''}
+  ${S.tasks.map(t=>`<div class="tli">
+    <span class="tli-icon">${icon(t.name)}</span>
+    <div class="tli-info"><div class="tli-name">${esc(t.name)}</div>
+    <div class="tli-meta">🕐 ${t.time} · ⏰ ${t.rem} דק' · ${t.frequency==='daily'?'📅 יומי':'📅 '+t.days?.map(d=>DS[d]).join(', ')}</div></div>
+    <div class="tli-acts"><button class="ebtn" data-action="edit-task" data-id="${t.id}">✏️</button><button class="dbtn" data-action="del-task" data-id="${t.id}">🗑️</button></div>
+  </div>`).join('')}`;
+}
+
+function rAnalytics(){
+  const bars=S.tasks.map(t=>{const{dn,tot,pct}=tStats(t);const c=pct>=80?'#10b981':pct>=50?'#f59e0b':'#ef4444';
+    return`<div class="sbr"><div class="sbr-top"><span class="sbr-name">${icon(t.name)} ${esc(t.name)}</span><span class="sbr-pct" style="color:${c}">${pct}%</span></div>
+    <div class="sbr-track"><div class="sbr-fill" style="width:${pct}%;background:linear-gradient(90deg,${c},${c}aa)"></div></div>
+    <div class="sbr-sub">${dn} מתוך ${tot} ימים</div></div>`;}).join('');
+  return`<div class="ac"><h3>📅 7 ימים אחרונים</h3>${svgBar(wkData())}</div>
+    <div class="ac"><h3>📆 4 שבועות אחרונים</h3>${svgLine(moData())}</div>
+    <div class="ac"><h3>🏅 ביצועים לפי משימה — 30 יום</h3>${bars}</div>`;
+}
+
+function render(){
+  document.getElementById('app').innerHTML=
+    rHeader()+rNotif()+rTabs()+
+    `<div class="content">${S.tab==='today'?rToday():S.tab==='tasks'?rTasks():rAnalytics()}</div>`;
+  attachEvents();
+  if(S.editNoteId){const ta=document.getElementById('nta-'+S.editNoteId);if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}}
+  if(S.form){const ni=document.getElementById('fn');if(ni)ni.focus();}
+}
+
+// Actions
+function setTab(t){S.tab=t;S.form=null;render();}
+function askNotif(){Notification.requestPermission().then(()=>render());}
+function toggleDone(id){
+  const d=td(),cur=S.comps[d]||[];
+  if(cur.includes(id)){S.comps={...S.comps,[d]:cur.filter(x=>x!==id)};}
+  else{
+    S.comps={...S.comps,[d]:[...cur,id]};
+    const rs=S.resched[d]||{};if(rs[id]){const nd={...rs};delete nd[id];S.resched={...S.resched,[d]:nd};}
+    if(S.cheerTimer)clearTimeout(S.cheerTimer);
+    S.cheer={id,msg:CHEERS[Math.floor(Math.random()*CHEERS.length)]};
+    S.cheerTimer=setTimeout(()=>{S.cheer=null;render();},2800);
+  }
+  sv(SK.c,S.comps);sv(SK.r,S.resched);render();
+}
+function startNote(id){S.editNoteId=id;render();}
+function saveNote(id){const ta=document.getElementById('nta-'+id);if(!ta)return;S.dnotes={...S.dnotes,[td()]:{...(S.dnotes[td()]||{}),[id]:ta.value}};S.editNoteId=null;sv(SK.d,S.dnotes);render();}
+function newTask(){S.form={frequency:'daily',days:[],time:'08:00',rem:15,name:''};S.tab='tasks';render();}
+function editTask(id){S.form={...S.tasks.find(t=>t.id===id)};S.tab='tasks';render();}
+function delTask(id){if(confirm('למחוק את המשימה?')){S.tasks=S.tasks.filter(t=>t.id!==id);sv(SK.t,S.tasks);render();}}
+function cancelForm(){S.form=null;render();}
+function setFreq(f){S.form={...S.form,frequency:f};if(f==='daily')S.form.days=[];render();}
+function toggleDay(i){const d=S.form.days||[];S.form={...S.form,days:d.includes(i)?d.filter(x=>x!==i):[...d,i]};render();}
+function saveTask(){const f=S.form;if(!f.name?.trim())return;const task={...f,name:f.name.trim()};if(task.id&&S.tasks.find(t=>t.id===task.id)){S.tasks=S.tasks.map(t=>t.id===task.id?task:t);}else{task.id=Date.now().toString();S.tasks=[...S.tasks,task];}S.form=null;sv(SK.t,S.tasks);render();}
+
+document.addEventListener('touchstart',function(){},true);
+
+// Attach touch events directly to every [data-action] element after render
+function attachEvents(){
+  document.querySelectorAll('[data-action]').forEach(el=>{
+    // remove old listeners by cloning
+    const clone=el.cloneNode(true);
+    el.parentNode.replaceChild(clone,el);
+    clone.addEventListener('touchend',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const action=this.dataset.action, id=this.dataset.id;
+      if(action==='toggle')toggleDone(id);
+      else if(action==='start-note')startNote(id);
+      else if(action==='save-note')saveNote(id);
+      else if(action==='new-task')newTask();
+      else if(action==='edit-task')editTask(id);
+      else if(action==='del-task')delTask(id);
+      else if(action==='cancel-form')cancelForm();
+      else if(action==='save-task')saveTask();
+      else if(action==='set-freq')setFreq(this.dataset.freq);
+      else if(action==='toggle-day')toggleDay(Number(this.dataset.day));
+      else if(action==='set-tab')setTab(this.dataset.tab);
+      else if(action==='ask-notif')askNotif();
+    },{passive:false});
+    // fallback for non-touch
+    clone.addEventListener('click',function(e){
+      e.preventDefault();
+      const action=this.dataset.action, id=this.dataset.id;
+      if(action==='toggle')toggleDone(id);
+      else if(action==='start-note')startNote(id);
+      else if(action==='save-note')saveNote(id);
+      else if(action==='new-task')newTask();
+      else if(action==='edit-task')editTask(id);
+      else if(action==='del-task')delTask(id);
+      else if(action==='cancel-form')cancelForm();
+      else if(action==='save-task')saveTask();
+      else if(action==='set-freq')setFreq(this.dataset.freq);
+      else if(action==='toggle-day')toggleDay(Number(this.dataset.day));
+      else if(action==='set-tab')setTab(this.dataset.tab);
+      else if(action==='ask-notif')askNotif();
+    });
+  });
+}
+
+function init(){
+  S.tasks=ld(SK.t)||DT;S.comps=ld(SK.c)||{};S.resched=ld(SK.r)||{};S.dnotes=ld(SK.d)||{};
+  checkResched();render();
+  setInterval(()=>{
+    checkResched();
+    if(Notification.permission!=='granted')return;
+    const now=new Date(),nm=now.getHours()*60+now.getMinutes();
+    S.tasks.filter(t=>onDay(t,now)).forEach(t=>{if(nm===tm(t.time)-(t.rem||15))new Notification(`⏰ ${t.name}`,{body:`מתוכנן לשעה ${t.time}`});});
+    render();
+  },60000);
+}
+init();
+</script>
+</body>
+</html>
